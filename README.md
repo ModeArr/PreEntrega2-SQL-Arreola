@@ -1,4 +1,4 @@
-# <center>1er Prentrega de proyecto final</center>
+# <center>2da Prentrega de proyecto final</center>
 Alumno: Modesto Rafael Alejandro Arreola Lira
 
 Comisión 59410 SQL
@@ -313,7 +313,7 @@ SELECT * FROM view_inventory_summary WHERE available_stock > 10;
 ```
 # Funciones de la Base de Datos
 
-## 1. `calculate_order_total`
+## 1. Funcion: `calculate_order_total`
 
 ### Descripción:
 Calcula el total de una orden, aplicando los descuentos correspondientes a los productos incluidos en la orden.
@@ -327,3 +327,223 @@ Calcula el total de una orden, aplicando los descuentos correspondientes a los p
 ### Ejemplo de uso:
 ```sql
 SELECT calculate_order_total(1);
+```
+
+## 2. Funcion: `get_product_stock`
+
+# get_product_stock
+
+### Descripción:
+Obtiene la cantidad disponible de un producto específico en el inventario.
+
+### Parámetros:
+- **p_product_id (INT)**: ID del producto.
+
+### Retorno:
+- **INT**: La cantidad de stock disponible para el producto.
+
+### Ejemplo de uso:
+```sql
+SELECT get_product_stock(5);
+```
+
+## 3. Funcion: `calculate_cart_total`
+
+# calculate_cart_total
+
+### Descripción:
+Calcula el total de los productos en una sesión de carrito de compras.
+
+### Parámetros:
+- **p_session_id (INT)**: ID de la sesión de compras.
+
+### Retorno:
+- **DECIMAL(10,2)**: El total de la sesión de compras.
+
+### Ejemplo de uso:
+```sql
+SELECT calculate_cart_total(10);
+```
+
+## 4. Funcion: `get_payment_status`
+
+# get_payment_status
+
+### Descripción:
+Obtiene el estado de pago de una orden.
+
+### Parámetros:
+- **p_order_id (INT)**: ID de la orden.
+
+### Retorno:
+- **ENUM('PENDING', 'COMPLETED', 'FAILED')**: El estado de pago de la orden.
+
+### Ejemplo de uso:
+```sql
+SELECT get_payment_status(2);
+```
+
+## 5. Funcion: `has_user_address`
+
+# has_user_address
+
+### Descripción:
+Verifica si un usuario tiene una dirección registrada.
+
+### Parámetros:
+- **p_user_id (INT)**: ID del usuario.
+
+### Retorno:
+- **BOOLEAN**: `TRUE` si el usuario tiene una dirección registrada, `FALSE` en caso contrario.
+
+### Ejemplo de uso:
+```sql
+SELECT has_user_address(3);
+```
+
+## 6. Funcion: `get_total_completed_payments`
+
+# get_total_completed_payments
+
+### Descripción:
+Calcula el valor total de los pagos completados por un usuario.
+
+### Parámetros:
+- **p_user_id (INT)**: ID del usuario.
+
+### Retorno:
+- **DECIMAL(10,2)**: El total de pagos completados por el usuario.
+
+### Ejemplo de uso:
+```sql
+SELECT get_total_completed_payments(4);
+```
+
+## 7. Funcion: `get_user_payment_provider`
+
+# get_user_payment_provider
+
+### Descripción:
+Obtiene el proveedor de pago preferido por un usuario.
+
+### Parámetros:
+- **p_user_id (INT)**: ID del usuario.
+
+### Retorno:
+- **VARCHAR(45)**: El nombre del proveedor de pago.
+
+### Ejemplo de uso:
+```sql
+SELECT get_user_payment_provider(5);
+```
+
+## 8. Funcion: `get_average_order_value`
+
+# get_average_order_value
+
+### Descripción:
+Calcula el valor promedio de las órdenes realizadas por un usuario.
+
+### Parámetros:
+- **p_user_id (INT)**: ID del usuario.
+
+### Retorno:
+- **DECIMAL(10,2)**: El valor promedio de las órdenes.
+
+### Ejemplo de uso:
+```sql
+SELECT get_average_order_value(6);
+```
+
+## 1. Procedimiento: `add_product`
+
+### Descripción:
+Este procedimiento almacenado permite agregar un nuevo producto en la base de datos, vinculando el producto con el inventario y aplicando descuentos si es necesario.
+
+### Parámetros:
+- **p_name (VARCHAR(100))**: Nombre del producto.
+- **p_description (VARCHAR(300))**: Descripción del producto.
+- **p_SKU (VARCHAR(50))**: Código de identificación del producto (SKU).
+- **p_category_id (INT)**: ID de la categoría del producto.
+- **p_inventory_id (INT)**: ID del inventario asociado al producto.
+- **p_price (DECIMAL(10,2))**: Precio del producto.
+- **p_discount_id (INT)**: ID del descuento (opcional).
+
+### Retorno:
+No tiene retorno directo; inserta un registro en la tabla `product` con los datos proporcionados.
+
+### Ejemplo de Uso:
+```sql
+CALL add_product('Laptop', 'High-end gaming laptop', 'LPT123', 1, 10, 1200.00, 2);
+```
+
+## 2. Procedimiento: `add_inventory`
+
+### Descripción:
+Este procedimiento almacenado permite agregar un nuevo registro en la tabla `product_inventory`, que se utiliza para gestionar el stock de productos.
+
+### Parámetros:
+- **p_inventory_id (INT)**: Id del producto al que se le va agregar el inventario
+- **p_quantity (INT)**: Cantidad inicial del producto en inventario.
+
+### Retorno:
+No tiene retorno directo; inserta un nuevo registro en la tabla `product_inventory` con la cantidad proporcionada.
+
+### Ejemplo de Uso:
+```sql
+CALL add_inventory(50);
+```
+
+## 3. Procedimiento: `update_product_price`
+
+## Descripción:
+Este procedimiento almacenado actualiza el precio de un producto existente en la base de datos.
+
+### Parámetros:
+- **p_product_id (INT)**: ID del producto cuyo precio se desea actualizar.
+- **p_new_price (DECIMAL(10,2))**: Nuevo precio del producto.
+
+### Retorno:
+No tiene retorno directo; actualiza el precio del producto en la tabla `product`.
+
+### Ejemplo de Uso:
+```sql
+CALL update_product_price(1, 999.99);
+```
+
+
+---
+
+## 4. Procedimiento: `delete_product`
+
+### Descripción:
+Este procedimiento almacenado elimina (lógicamente) un producto de la base de datos marcándolo con la fecha de eliminación.
+
+### Parámetros:
+- **p_product_id (INT)**: ID del producto a eliminar.
+
+### Retorno:
+No tiene retorno directo; actualiza el campo `deleted_at` del producto en la tabla `product`.
+
+### Ejemplo de Uso:
+```sql
+CALL delete_product(1);
+```
+
+## 5. Procedimiento: `add_discount`
+
+### Descripción:
+Este procedimiento permite agregar un nuevo descuento a la base de datos, que puede ser aplicado a productos.
+
+### Parámetros:
+- **p_name (VARCHAR(80))**: Nombre del descuento.
+- **p_description (VARCHAR(120))**: Descripción del descuento.
+- **p_discount_percent (TINYINT)**: Porcentaje de descuento que se aplicará.
+
+### Retorno:
+No tiene retorno directo; inserta un nuevo registro en la tabla `discount` con la información proporcionada.
+
+### Ejemplo de Uso:
+```sql
+CALL add_discount('Verano', 'Descuento especial de verano', 15);
+```
