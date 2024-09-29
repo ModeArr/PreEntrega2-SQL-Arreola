@@ -210,3 +210,120 @@ La tabla `cart_item` almacena los productos que los usuarios han agregado a sus 
 | `quantity`     | INT          | NOT NULL, UNSIGNED      | Cantidad del producto en el carrito.                    |
 | `created_at`   | DATETIME     | NOT NULL                | Fecha y hora en que se creó el ítem del carrito.        |
 | `modified_at`   | DATETIME     | NULL                | Fecha y hora en que se modifico el ítem del carrito.        |
+
+# Vistas de la Base de Datos
+
+## 1. Vista: `view_products_with_inventory_and_discount`
+### Descripción:
+Esta vista proporciona información detallada de los productos, incluyendo su inventario actual y los descuentos aplicables, mostrando también el precio después del descuento.
+
+### Columnas:
+- **id_product**: Identificador único del producto.
+- **product_name**: Nombre del producto.
+- **product_description**: Descripción del producto.
+- **SKU**: Código de identificación del producto (Stock Keeping Unit).
+- **price**: Precio del producto antes de descuentos.
+- **stock_quantity**: Cantidad de producto disponible en inventario.
+- **discount_name**: Nombre del descuento aplicado (si existe).
+- **discount_percent**: Porcentaje de descuento aplicado.
+- **discounted_price**: Precio final después de aplicar el descuento.
+
+### Ejemplo de Consulta:
+```sql
+SELECT * FROM view_products_with_inventory_and_discount WHERE stock_quantity > 0;
+```
+
+## 2. Vista: `view_order_details`
+
+### Descripción:
+Muestra información detallada sobre las órdenes realizadas por los usuarios, incluyendo los detalles del usuario y el método de pago.
+
+### Columnas:
+- **id_order_details**: Identificador único de la orden.
+- **user_name**: Nombre de usuario que realizó la orden.
+- **first_name**: Primer nombre del usuario.
+- **last_name**: Apellido del usuario.
+- **shipping_address**: Dirección de envío proporcionada por el usuario.
+- **order_total**: Total de la orden.
+- **payment_provider**: Proveedor del servicio de pago utilizado.
+- **payment_status**: Estado del pago (PENDING, COMPLETED, FAILED).
+- **order_date**: Fecha en la que se creó la orden.
+
+### Ejemplo de Consulta:
+```sql
+SELECT * FROM view_order_details WHERE payment_status = 'COMPLETED';
+```
+
+## 3. Vista: `view_cart_history`
+
+### Descripción:
+Proporciona el historial de los productos añadidos a los carritos de compras por los usuarios, junto con la información de la sesión y el usuario.
+
+### Columnas:
+- **id_cart_item**: Identificador único del ítem en el carrito.
+- **user_id**: Identificador del usuario.
+- **username**: Nombre de usuario.
+- **product_name**: Nombre del producto en el carrito.
+- **quantity**: Cantidad de productos añadidos al carrito.
+- **session_total**: Total de la sesión de compra.
+- **session_date**: Fecha en la que se creó la sesión de compra.
+
+### Ejemplo de Consulta:
+```sql
+SELECT * FROM view_cart_history WHERE username = 'johndoe';
+```
+
+## 4. Vista: `view_user_addresses`
+
+### Descripción:
+Muestra las direcciones de envío asociadas a los usuarios, útil para la gestión de envíos y la validación de la información del cliente.
+
+### Columnas:
+- **id_user**: Identificador único del usuario.
+- **username**: Nombre de usuario.
+- **first_name**: Primer nombre del usuario.
+- **last_name**: Apellido del usuario.
+- **address_line1**: Primera línea de la dirección de envío.
+- **address_line2**: Segunda línea de la dirección de envío (opcional).
+- **city**: Ciudad de la dirección.
+- **postal_code**: Código postal de la dirección.
+- **country**: País de la dirección.
+- **telephone**: Teléfono fijo del usuario (opcional).
+- **mobile**: Teléfono móvil del usuario (opcional).
+
+### Ejemplo de Consulta:
+```sql
+SELECT * FROM view_user_addresses WHERE city = 'Madrid';
+```
+
+## 5. Vista: `view_inventory_summary`
+
+### Descripción:
+Proporciona un resumen del inventario de productos, mostrando la cantidad disponible y el precio de cada producto.
+
+### Columnas:
+- **id_product**: Identificador único del producto.
+- **product_name**: Nombre del producto.
+- **available_stock**: Cantidad de producto disponible en inventario.
+- **price**: Precio del producto.
+
+### Ejemplo de Consulta:
+```sql
+SELECT * FROM view_inventory_summary WHERE available_stock > 10;
+```
+# Funciones de la Base de Datos
+
+## 1. `calculate_order_total`
+
+### Descripción:
+Calcula el total de una orden, aplicando los descuentos correspondientes a los productos incluidos en la orden.
+
+### Parámetros:
+- **p_order_id (INT)**: ID de la orden.
+
+### Retorno:
+- **DECIMAL(10,2)**: El total calculado de la orden.
+
+### Ejemplo de uso:
+```sql
+SELECT calculate_order_total(1);
