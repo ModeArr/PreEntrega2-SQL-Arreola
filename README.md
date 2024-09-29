@@ -164,8 +164,6 @@ Esta tabla almacena las direcciones asociadas a los usuarios, permitiendo que un
 | `telephone`    | VARCHAR(15)   |                                          | Teléfono asociado a la dirección.             |
 | `mobile`       | VARCHAR(15)  | NULL                                      | Número de móvil asociado a la dirección (opcional). |
 
----
-
 ## `user_payment`
 
 **Descripción:**
@@ -180,8 +178,6 @@ La tabla `user_payment` almacena la información de los métodos de pago de los 
 | `account_no`   | VARCHAR(20)  | NOT NULL                | Número de cuenta o tarjeta del método de pago.          |
 | `expiry`       | CHAR(5)      | NULL                    | Fecha de vencimiento del método de pago.                |
 
----
-
 ## `shopping_session`
 
 **Descripción:**
@@ -194,8 +190,6 @@ La tabla `shopping_session` gestiona las sesiones de compras activas de los usua
 | `total`        | DECIMAL(10,2)          | NOT NULL                | Total acumulado de la sesión de compra.                 |
 | `created_at`   | DATETIME     | NOT NULL                | Fecha y hora en que se creó la sesión de compra.        |
 | `modified_at`  | DATETIME     | NULL                    | Fecha y hora de la última modificación de la sesión.     |
-
----
 
 ## `cart_item`
 
@@ -311,7 +305,8 @@ Proporciona un resumen del inventario de productos, mostrando la cantidad dispon
 ```sql
 SELECT * FROM view_inventory_summary WHERE available_stock > 10;
 ```
-# Funciones de la Base de Datos
+
+---
 
 ## 1. Funcion: `calculate_order_total`
 
@@ -331,8 +326,6 @@ SELECT calculate_order_total(1);
 
 ## 2. Funcion: `get_product_stock`
 
-# get_product_stock
-
 ### Descripción:
 Obtiene la cantidad disponible de un producto específico en el inventario.
 
@@ -348,8 +341,6 @@ SELECT get_product_stock(5);
 ```
 
 ## 3. Funcion: `calculate_cart_total`
-
-# calculate_cart_total
 
 ### Descripción:
 Calcula el total de los productos en una sesión de carrito de compras.
@@ -385,8 +376,6 @@ SELECT get_payment_status(2);
 
 ## 5. Funcion: `has_user_address`
 
-# has_user_address
-
 ### Descripción:
 Verifica si un usuario tiene una dirección registrada.
 
@@ -402,8 +391,6 @@ SELECT has_user_address(3);
 ```
 
 ## 6. Funcion: `get_total_completed_payments`
-
-# get_total_completed_payments
 
 ### Descripción:
 Calcula el valor total de los pagos completados por un usuario.
@@ -421,8 +408,6 @@ SELECT get_total_completed_payments(4);
 
 ## 7. Funcion: `get_user_payment_provider`
 
-# get_user_payment_provider
-
 ### Descripción:
 Obtiene el proveedor de pago preferido por un usuario.
 
@@ -439,8 +424,6 @@ SELECT get_user_payment_provider(5);
 
 ## 8. Funcion: `get_average_order_value`
 
-# get_average_order_value
-
 ### Descripción:
 Calcula el valor promedio de las órdenes realizadas por un usuario.
 
@@ -454,6 +437,8 @@ Calcula el valor promedio de las órdenes realizadas por un usuario.
 ```sql
 SELECT get_average_order_value(6);
 ```
+
+---
 
 ## 1. Procedimiento: `add_product`
 
@@ -511,9 +496,6 @@ No tiene retorno directo; actualiza el precio del producto en la tabla `product`
 CALL update_product_price(1, 999.99);
 ```
 
-
----
-
 ## 4. Procedimiento: `delete_product`
 
 ### Descripción:
@@ -547,3 +529,4 @@ No tiene retorno directo; inserta un nuevo registro en la tabla `discount` con l
 ```sql
 CALL add_discount('Verano', 'Descuento especial de verano', 15);
 ```
+
