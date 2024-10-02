@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `order_details` (
 CREATE TABLE IF NOT EXISTS `payment_details` (
   `id_payment_details` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `amount` DECIMAL(10,2) NOT NULL,
-  `provider` VARCHAR(45) NOT NULL,
+  `provider_id` INT NOT NULL,
   `status` ENUM('PENDING', 'COMPLETED', 'FAILED') NOT NULL,
   `created_at` DATETIME NOT NULL,
   `modified_at` DATETIME NULL);
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `user_payment` (
   `id_user_payment` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `user_id` INT NOT NULL,
   `payment_type` VARCHAR(45) NOT NULL,
-  `provider` VARCHAR(45) NOT NULL,
+  `provider_id` INT NOT NULL,
   `account_no` VARCHAR(20) NOT NULL,
   `expiry` CHAR(5) NOT NULL,
   `created_at` DATETIME NOT NULL,
@@ -196,7 +196,10 @@ ALTER TABLE `user_address`
 ALTER TABLE `user_payment`
   ADD CONSTRAINT `fk_user_payment_user`
     FOREIGN KEY (`user_id`)
-    REFERENCES `user` (`id_user`);
+    REFERENCES `user` (`id_user`),
+  ADD CONSTRAINT `fk_user_payment_providers`
+    FOREIGN KEY (`provider_id`)
+    REFERENCES `payment_providers` (`id_payment_provider`);
 
 ALTER TABLE `shopping_session`
   ADD CONSTRAINT `fk_shopping_session_user`
@@ -210,3 +213,8 @@ ALTER TABLE `cart_item`
   ADD CONSTRAINT `fk_cart_item_session`
     FOREIGN KEY (`session_id`)
     REFERENCES `shopping_session` (`id_shopping_session`);
+    
+ALTER TABLE `payment_details`
+  ADD CONSTRAINT `fk_payments_details_providers`
+    FOREIGN KEY (`provider_id`)
+    REFERENCES `payment_providers` (`id_payment_provider`);

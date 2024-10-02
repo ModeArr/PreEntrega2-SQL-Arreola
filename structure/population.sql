@@ -43,12 +43,12 @@ VALUES ('jdoe', 'pass1234', 'John', 'Doe', '123 Main St', '555-1234'),
        ('pjackson', 'password98', 'Peter', 'Jackson', '987 Hill St', '555-3030');
 
 -- Inserción de datos en la tabla payment_details
-INSERT INTO payment_details (amount, provider, status) 
-VALUES (699.99, 'PayPal', 'COMPLETED'),
-       (1199.99, 'Credit Card', 'PENDING'),
-       (1299.99, 'Credit Card', 'COMPLETED'),
-       (499.99, 'PayPal', 'FAILED'),
-       (9.99, 'Debit Card', 'COMPLETED');
+INSERT INTO payment_details (amount, provider_id, status) 
+VALUES (699.99, 2, 'COMPLETED'),
+       (1199.99, 3, 'PENDING'),
+       (1299.99, 1, 'COMPLETED'),
+       (499.99, 2, 'FAILED'),
+       (9.99, 3, 'COMPLETED');
        
 -- Inserción de datos en la tabla order_details
 INSERT INTO order_details (user_id, total, payment_id) 
@@ -93,9 +93,9 @@ VALUES (1, '123 Main St', 'Apt 1', 'New York', '10001', 'USA', '555-1234', '555-
        (5, '987 Hill St', 'House 5', 'Chicago', '06001', 'USA', '555-3030', '555-3333');
 
 -- Inserción de datos en la tabla user_payment
-INSERT INTO user_payment (user_id, payment_type, provider, account_no, expiry) 
-VALUES (1, 'Credit Card', 2, '1234567890123456', '12/24'),  -- Visa
-       (2, 'PayPal', 1, 'asmith@gmail.com', '12/24'),      -- PayPal
-       (3, 'Credit Card', 3, '6543210987654321', '11/23'), -- MasterCard
-       (4, 'Debit Card', 2, '1122334455667788', '10/25'),  -- Visa
-       (5, 'Credit Card', 2, '2233445566778899', '09/23'); -- Visa
+INSERT INTO user_payment (user_id, payment_type, provider_id, account_no, expiry) 
+VALUES (1, 'Credit Card', 2, '1234567890123456', '12/24'),
+       (2, 'PayPal', 1, 'asmith@gmail.com', '12/24'), 
+       (3, 'Credit Card', 3, '6543210987654321', '11/23'),
+       (4, 'Debit Card', 2, '1122334455667788', '10/25'), 
+       (5, 'Credit Card', 2, '2233445566778899', '09/23'); 
