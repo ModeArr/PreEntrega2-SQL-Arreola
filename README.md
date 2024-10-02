@@ -204,6 +204,20 @@ La tabla `cart_item` almacena los productos que los usuarios han agregado a sus 
 | `created_at`   | DATETIME     | NOT NULL                | Fecha y hora en que se creó el ítem del carrito.        |
 | `modified_at`   | DATETIME     | NULL                | Fecha y hora en que se modifico el ítem del carrito.        |
 
+## `payment_providers`
+
+La tabla `payment_providers` contiene información sobre los proveedores de pago disponibles en el sistema de ecommerce. Estos proveedores permiten gestionar las transacciones de los usuarios y procesar los pagos.
+
+| Columna           | Tipo           | Atributos         | Descripción                                                                 |
+|-------------------|----------------|-------------------|-----------------------------------------------------------------------------|
+| `id_payment_provider` | INT            | PRIMARY KEY, AUTO_INCREMENT | Identificador único para cada proveedor de pago.                           |
+| `provider_name`    | VARCHAR(100)    | NOT NULL          | Nombre del proveedor de pago (ej: PayPal, Stripe, etc.).                    |
+| `provider_code`    | VARCHAR(20)     | NOT NULL, UNIQUE  | Código único asignado al proveedor de pago (ej: PPL para PayPal).           |
+| `active`           | TINYINT(1)      | NOT NULL, DEFAULT 1 | Indica si el proveedor de pago está activo (1) o inactivo (0).              |
+| `created_at`       | DATETIME        | NOT NULL          | Fecha y hora en que se creó el registro del proveedor de pago.              |
+| `modified_at`      | DATETIME        | NULL              | Fecha y hora en que se modificó por última vez el registro del proveedor.   |
+
+
 # Vistas de la Base de Datos
 
 ## 1. Vista: `view_products_with_inventory_and_discount`
@@ -569,6 +583,7 @@ BEGIN
   SET NEW.modified_at = NOW();
 END //
 DELIMITER ;
+```
 
 ### Trigger para `created_at`
 Establece el campo `created_at` con la fecha y hora actuales al crearse un nuevo registro.
