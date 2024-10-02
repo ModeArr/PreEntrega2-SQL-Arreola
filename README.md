@@ -304,8 +304,9 @@ Proporciona un resumen del inventario de productos, mostrando la cantidad dispon
 ```sql
 SELECT * FROM view_inventory_summary WHERE available_stock > 10;
 ```
-
 ---
+
+# FUNCIONES
 
 ## 1. Funcion: `calculate_order_total`
 
@@ -439,6 +440,8 @@ SELECT get_average_order_value(6);
 
 ---
 
+# Stored Procedures
+
 ## 1. Procedimiento: `add_product`
 
 ### Descripción:
@@ -528,4 +531,186 @@ No tiene retorno directo; inserta un nuevo registro en la tabla `discount` con l
 ```sql
 CALL add_discount('Verano', 'Descuento especial de verano', 15);
 ```
+---
 
+# Triggers
+
+## Triggers para campos `modified_at` y `created_at`
+
+### Descripción General
+Estos triggers se encargan de actualizar automáticamente los campos `modified_at` y `created_at` en diversas tablas cuando se realizan operaciones de `UPDATE` o `INSERT`, respectivamente. Su función es registrar la fecha y hora en que se modificó o creó cada registro.
+
+### Tablas Afectadas
+- `product_inventory`
+- `discount`
+- `product_category`
+- `product`
+- `user`
+- `order_details`
+- `payment_details`
+- `order_items`
+- `user_address`
+- `user_payment`
+- `shopping_session`
+- `cart_item`
+
+### Trigger para `modified_at`
+Actualiza el campo `modified_at` con la fecha y hora actuales al modificarse un registro.
+
+- **Evento**: `BEFORE UPDATE`
+- **Acción**: Establece `modified_at` a `NOW()`.
+
+```sql
+DELIMITER //
+CREATE TRIGGER before_[tabla]_update_modified
+BEFORE UPDATE ON [tabla]
+FOR EACH ROW
+BEGIN
+  SET NEW.modified_at = NOW();
+END //
+DELIMITER ;
+
+### Trigger para `created_at`
+Establece el campo `created_at` con la fecha y hora actuales al crearse un nuevo registro.
+
+- **Evento**: `BEFORE INSERT`
+- **Acción**: Establece `created_at` a `NOW()`.
+
+```sql
+DELIMITER //
+CREATE TRIGGER before_[tabla]_insert_created
+BEFORE INSERT ON [tabla]
+FOR EACH ROW
+BEGIN
+  SET NEW.created_at = NOW();
+END //
+DELIMITER ;
+```
+
+## Triggers de Validación
+
+### Trigger para validar que el precio del producto no sea negativo
+Este trigger impide que se inserte o actualice un producto cuyo precio sea menor a 0.
+
+- **Tabla**: `product`
+- **Eventos**: `BEFORE INSERT` y `BEFORE UPDATE`
+- **Acción**: Si el precio es menor a 0, se genera un error.
+
+```sql
+DELIMITER //
+CREATE TRIGGER before_product_[evento]_validation
+BEFORE [evento] ON product
+FOR EACH ROW
+BEGIN
+  IF NEW.price < 0 THEN
+    SIGNAL SQLSTATE '45000' 
+    SET MESSAGE_TEXT = 'El precio del producto no puede ser negativo';
+  END IF;
+END //
+DELIMITER ;
+```
+
+### Trigger para validar que la cantidad en el inventario no sea negativa
+Este trigger asegura que no se inserte o actualice una cantidad negativa en el inventario.
+
+- **Tabla**: `product_inventory`
+- **Eventos**: `BEFORE INSERT` y `BEFORE UPDATE`
+- **Acción**: Si la cantidad es menor a 0, se genera un error.
+
+```sql
+DELIMITER //
+CREATE TRIGGER before_product_inventory_[evento]_validation
+BEFORE [evento] ON product_inventory
+FOR EACH ROW
+BEGIN
+  IF NEW.quantity < 0 THEN
+    SIGNAL SQLSTATE '45000' 
+    SET MESSAGE_TEXT = 'La cantidad en inventario no puede ser negativa';
+  END IF;
+END //
+DELIMITER ;
+```
+
+### Trigger para validar que el porcentaje de descuento esté entre 0 y 100
+Este trigger valida que el porcentaje de descuento esté en un rango aceptable.
+
+- **Tabla**: `discount`
+- **Eventos**: `BEFORE INSERT` y `BEFORE UPDATE`
+- **Acción**: Si el porcentaje es menor a 0 o mayor a 100, se genera un error.
+
+```sql
+DELIMITER //
+CREATE TRIGGER before_discount_[evento]_validation
+BEFORE [evento] ON discount
+FOR EACH ROW
+BEGIN
+  IF NEW.discount_percent < 0 OR NEW.discount_percent > 100 THEN
+    SIGNAL SQLSTATE '45000' 
+    SET MESSAGE_TEXT = 'El porcentaje de descuento debe estar entre 0 y 100';
+  END IF;
+END //
+DELIMITER ;
+```
+
+### Trigger para validar la fecha de expiración del método de pago
+Este trigger asegura que la fecha de expiración de un método de pago no sea en el pasado.
+
+- **Tabla**: `user_payment`
+- **Evento**: `BEFORE UPDATE`
+- **Acción**: Si la fecha de expiración es anterior a la fecha actual, se genera un error.
+
+```sql
+DELIMITER //
+CREATE TRIGGER before_user_payment_update_validation
+BEFORE UPDATE ON user_payment
+FOR EACH ROW
+BEGIN
+  IF STR_TO_DATE(CONCAT('01-', NEW.expiry), '%d-%m-%Y') < CURDATE() THEN
+    SIGNAL SQLSTATE '45000' 
+    SET MESSAGE_TEXT = 'La fecha de expiración del método de pago no puede ser en el pasado';
+  END IF;
+END //
+DELIMITER ;
+```
+
+### Trigger para validar que el total del pedido sea mayor que 0
+Este trigger impide que se inserte o actualice un pedido con total menor o igual a 0.
+
+- **Tabla**: `order_details`
+- **Eventos**: `BEFORE INSERT` y `BEFORE UPDATE`
+- **Acción**: Si el total es menor o igual a 0, se genera un error.
+
+```sql
+DELIMITER //
+CREATE TRIGGER before_order_details_[evento]_validation
+BEFORE [evento] ON order_details
+FOR EACH ROW
+BEGIN
+  IF NEW.total <= 0 THEN
+    SIGNAL SQLSTATE '45000' 
+    SET MESSAGE_TEXT = 'El total del pedido debe ser mayor que 0';
+  END IF;
+END //
+DELIMITER ;
+```
+
+### Trigger para validar que la cantidad de productos en el carrito sea mayor que 0
+Este trigger asegura que no se inserten o actualicen cantidades no válidas en el carrito de compras.
+
+- **Tabla**: `cart_item`
+- **Eventos**: `BEFORE INSERT` y `BEFORE UPDATE`
+- **Acción**: Si la cantidad es menor o igual a 0, se genera un error.
+
+```sql
+DELIMITER //
+CREATE TRIGGER before_cart_item_[evento]_validation
+BEFORE [evento] ON cart_item
+FOR EACH ROW
+BEGIN
+  IF NEW.quantity <= 0 THEN
+    SIGNAL SQLSTATE '45000' 
+    SET MESSAGE_TEXT = 'La cantidad de productos en el carrito debe ser mayor que 0';
+  END IF;
+END //
+DELIMITER ;
+```
