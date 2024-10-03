@@ -98,6 +98,7 @@ CREATE TABLE IF NOT EXISTS `order_items` (
   `id_order_items` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `order_id` INT NOT NULL,
   `product_id` INT NOT NULL,
+  `quantity` INT UNSIGNED NOT NULL,
   `created_at` DATETIME NOT NULL,
   `modified_at` DATETIME NULL);
 

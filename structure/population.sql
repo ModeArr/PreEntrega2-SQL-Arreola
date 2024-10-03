@@ -76,13 +76,13 @@ VALUES (1, 1, 1),
        (5, 6, 1);
 
 -- Inserción de datos en la tabla order_items
-INSERT INTO order_items (order_id, product_id) 
-VALUES (1, 1),
-       (1, 2),
-       (2, 3),
-       (3, 4),
-       (4, 5),
-       (5, 6);
+INSERT INTO order_items (order_id, product_id, quantity) 
+VALUES (1, 1, 10),
+       (1, 2, 4),
+       (2, 3, 5),
+       (3, 4, 8),
+       (4, 5, 5),
+       (5, 6, 2);
 
 -- Inserción de datos en la tabla user_address
 INSERT INTO user_address (user_id, address_line1, address_line2, city, postal_code, country, telephone, mobile) 
