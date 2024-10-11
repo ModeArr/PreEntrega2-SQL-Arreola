@@ -1,3 +1,5 @@
+USE `ecommerce`;
+
 -- Vista de productos con inventario y descuentos
 CREATE VIEW `view_products_with_inventory_and_discount` AS
 SELECT 
@@ -17,24 +19,7 @@ LEFT JOIN
 LEFT JOIN 
     discount d ON p.discount_id = d.id_discount;
 
--- Vista de órdenes con detalles de usuario y pago
-CREATE VIEW `view_order_details` AS
-SELECT 
-    o.id_order_details,
-    u.username AS user_name,
-    u.first_name,
-    u.last_name,
-    u.address AS shipping_address,
-    o.total AS order_total,
-    pd.provider AS payment_provider,
-    pd.status AS payment_status,
-    o.created_at AS order_date
-FROM 
-    order_details o
-JOIN 
-    user u ON o.user_id = u.id_user
-JOIN 
-    payment_details pd ON o.payment_id = pd.id_payment_details;
+
 
 -- Vista de historial de carrito de compras
 CREATE VIEW `view_cart_history` AS

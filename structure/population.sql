@@ -1,3 +1,5 @@
+USE `ecommerce`;
+
 -- Inserción de datos en la tabla payment_providers
 INSERT INTO payment_providers (name, description)
 VALUES ('PayPal', 'Online payment provider'),
